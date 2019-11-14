@@ -1,3 +1,17 @@
 body {
   font: 12px sans-serif;
 }
+.public {
+    stroke: lightblue;
+    fill: lightblue;
+}
+.private {
+    stroke: lightgreen;
+    fill: lightgreen;
+}
+#scatterplot1 {
+    float: left;
+}
+#scatterplot2 {
+    float: left;
+}
