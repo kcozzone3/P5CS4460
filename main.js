@@ -1,10 +1,15 @@
 var collegeData = [];
-var width = 600;
-var height= 600;
+
+const width = 600;
+const height= 600;
+
+var currGraph = 0;
+const lastGraph = 1;
+
 //set currently selected point (linking) to be a number > items in dataset
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
 
-var label = {
+const label = {
     'name'          : 'Name',
     'control'       : 'Control',
     'admissionRate' : 'Admission Rate',
@@ -35,8 +40,18 @@ function loadData() {
             })
         })
 
-        setupGraph('satAvg', 'actMed');
+        graph(0);
     })
+}
+
+function graph(num) {
+    //TODO: keep currently selected point highlighted btwn graphs
+    switch (num) {
+        case 0: setupGraph('satAvg', 'actMed');         break;
+        case 1: setupGraph('costAvg', 'expPerStudent'); break;
+        //TODO: add more graph options
+        default: break;
+    }
 }
 
 function setupGraph(x, y) {
@@ -132,6 +147,49 @@ function updateValues(d, x, y) {
 
         document.getElementById("val2").innerHTML = "";
         document.getElementById("val2").append("" + d[y]);
+}
+
+function nextGraph(curr) {
+    clearGraph();
+
+    currGraph++;
+    graph(currGraph);
+
+    //disable/enable buttons
+    if (currGraph == lastGraph) {
+        document.getElementById("next").disabled = true;
+    } else {
+        document.getElementById("next").disabled = false;
+    }
+    document.getElementById("prev").disabled = false;
+}
+
+function prevGraph(curr) {
+    clearGraph();
+
+    currGraph--;
+    graph(currGraph);
+
+    //disable/enable buttons
+    if (currGraph == 0) {
+        document.getElementById("prev").disabled = true;
+    } else {
+        document.getElementById("prev").disabled = false;
+    }
+    document.getElementById("next").disabled = false;
+}
+
+function clearGraph() {
+    //clear graph
+    document.getElementById("scatterplot").innerHTML = "";
+
+    //clear labels
+    document.getElementById("college").innerHTML = "";
+    document.getElementById("type").innerHTML = "";
+    document.getElementById("label1").innerHTML = "";
+    document.getElementById("val1").innerHTML = "";
+    document.getElementById("label2").innerHTML = "";
+    document.getElementById("val2").innerHTML = "";
 }
 
 
