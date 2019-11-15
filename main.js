@@ -2,7 +2,7 @@ var collegeData = [];
 var width = 600;
 var height= 600;
 //set currently selected point (linking) to be a number > items in dataset
-var currentlySelectedPoint = 100000;
+var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
 
 var label = {
     'name'          : 'Name',
@@ -40,7 +40,7 @@ function loadData() {
 }
 
 function setupGraph(x, y) {
-    //update labels for on click
+    //update labels based on graph params
     document.getElementById("label1").innerHTML = label[x] + ':';
     document.getElementById("label2").innerHTML = label[y] + ':';
 
