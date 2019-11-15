@@ -2,7 +2,20 @@ var collegeData = [];
 var width = 600;
 var height= 600;
 //set currently selected point (linking) to be a number > items in dataset
-var currentlySelectedPoint = 100000;
+var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
+
+var label = {
+    'name'          : 'Name',
+    'control'       : 'Control',
+    'admissionRate' : 'Admission Rate',
+    'actMed'        : 'ACT Median',
+    'satAvg'        : 'SAT Average',
+    'costAvg'       : 'Average Cost',
+    'expPerStudent' : 'Expenditure Per Student',
+    'debtMed'       : 'Median Debt on Graduation',
+    'earningsAvg'   : 'Mean Earnings 8 years After Entry',
+    'earningsMed'   : 'Median Earnings 8 years After Entry'
+};
 
 function loadData() {
     d3.csv("colleges.csv", function(csv) {
@@ -22,19 +35,24 @@ function loadData() {
             })
         })
 
-        setup();
+        setupGraph('satAvg', 'actMed');
     })
 }
 
-function setup() {
+function setupGraph(x, y) {
+    //update labels based on graph params
+    document.getElementById("label1").innerHTML = label[x] + ':';
+    document.getElementById("label2").innerHTML = label[y] + ':';
+
+
     // get the data we care about
-    var satAvg = d3.extent(collegeData, function(row) { return row.satAvg; });
-    var actMed = d3.extent(collegeData, function(row) { return row.actMed; });
+    var xExtent = d3.extent(collegeData, function(row) { return row[x]; });
+    var yExtent = d3.extent(collegeData, function(row) { return row[y]; });
 
 
     // Axis setup
-    var xScale = d3.scaleLinear().domain(satAvg).range([50, 570]);
-    var yScale = d3.scaleLinear().domain(actMed).range([570, 30]);
+    var xScale = d3.scaleLinear().domain(xExtent).range([50, 570]);
+    var yScale = d3.scaleLinear().domain(yExtent).range([570, 30]);
 
     var xAxis = d3.axisBottom().scale(xScale);
     var yAxis = d3.axisLeft().scale(yScale);
@@ -59,8 +77,8 @@ function setup() {
                 return "private";
             }
        })
-       .attr("cx", function(d) { return xScale(d.satAvg); })
-       .attr("cy", function(d) { return yScale(d.actMed); })
+       .attr("cx", function(d) { return xScale(d[x]); })
+       .attr("cy", function(d) { return yScale(d[y]); })
        .attr("r", 5)
        .on("click", function(d,i) {
             if (currentlySelectedPoint < 100000) {
@@ -72,7 +90,7 @@ function setup() {
             }
             currentlySelectedPoint = i;
             d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
-            updateValues(d);
+            updateValues(d, x, y);
        });
 
     // add axis labels
@@ -86,7 +104,7 @@ function setup() {
         .attr("x", width-16)
         .attr("y", -6)
         .style("text-anchor", "end")
-        .text("SAT Average");
+        .text(label[x]);
 
     scatterplot
         .append("g")
@@ -99,24 +117,22 @@ function setup() {
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("ACT Median");
+        .text(label[y]);
 }
 
-function updateValues(d) {
+function updateValues(d, x, y) {
         document.getElementById("college").innerHTML = "";
         document.getElementById("college").append("" + d.name);
 
         document.getElementById("type").innerHTML = "";
         document.getElementById("type").append("" + d.control);
 
-        document.getElementById("sat").innerHTML = "";
-        document.getElementById("sat").append("" + d.satAvg);
+        document.getElementById("val1").innerHTML = "";
+        document.getElementById("val1").append("" + d[x]);
 
-        document.getElementById("act").innerHTML = "";
-        document.getElementById("act").append("" + d.actMed);
+        document.getElementById("val2").innerHTML = "";
+        document.getElementById("val2").append("" + d[y]);
 }
-
-
 
 
 //main()
