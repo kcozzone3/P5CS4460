@@ -1,6 +1,8 @@
 var collegeData = [];
-var width = 500;
-var height= 500;
+var width = 600;
+var height= 600;
+//set currently selected point (linking) to be a number > items in dataset
+var currentlySelectedPoint = 100000;
 
 function loadData() {
     d3.csv("colleges.csv", function(csv) {
@@ -31,35 +33,25 @@ function setup() {
 
 
     // Axis setup
-    var xScale = d3.scaleLinear().domain(satAvg).range([50, 470]);
-    var yScale = d3.scaleLinear().domain(actMed).range([470, 30]);
+    var xScale = d3.scaleLinear().domain(satAvg).range([50, 570]);
+    var yScale = d3.scaleLinear().domain(actMed).range([570, 30]);
 
     var xAxis = d3.axisBottom().scale(xScale);
     var yAxis = d3.axisLeft().scale(yScale);
 
-    var xScale2 = d3.scaleLinear().domain(satAvg).range([50, 470]);
-    var yScale2 = d3.scaleLinear().domain(actMed).range([470, 30]);
-
-    var xAxis2 = d3.axisBottom().scale(xScale2);
-    var yAxis2 = d3.axisLeft().scale(yScale2);
-
-    //Create SVGs for charts
-    var leftScatterplot = d3.select("#scatterplot1")
-                    .append("svg:svg")
-                    .attr("width",width)
-                    .attr("height",height);
-
-    var rightScatterplot = d3.select("#scatterplot2")
+    //Create SVGs for chart
+    var scatterplot = d3.select("#scatterplot")
                     .append("svg:svg")
                     .attr("width",width)
                     .attr("height",height);
 
 
     // add points
-    var leftPoints = leftScatterplot.selectAll("circle")
+    var points = scatterplot.selectAll("circle")
        .data(collegeData)
        .enter()
        .append("circle")
+       .attr("id", function(d,i) {return "p" + i;})
        .attr("class", function(d) {
             if (d.control == "Public") {
                 return "public";
@@ -69,25 +61,22 @@ function setup() {
        })
        .attr("cx", function(d) { return xScale(d.satAvg); })
        .attr("cy", function(d) { return yScale(d.actMed); })
-       .attr("r", 5);
-
-    var rightPoints = rightScatterplot.selectAll("circle")
-       .data(collegeData)
-       .enter()
-       .append("circle")
-       .attr("class", function(d) {
-            if (d.control == "Public") {
-                return "public";
-            } else {
-                return "private";
+       .attr("r", 5)
+       .on("click", function(d,i) {
+            if (currentlySelectedPoint < 100000) {
+                if (collegeData[currentlySelectedPoint]["control"] == "Public") {
+                    d3.select("#p" + currentlySelectedPoint).attr("class", "public");
+                } else {
+                    d3.select("#p" + currentlySelectedPoint).attr("class", "private");
+                }
             }
-       })
-       .attr("cx", function(d) { return xScale(d.satAvg); })
-       .attr("cy", function(d) { return yScale(d.actMed); })
-       .attr("r", 5);
+            currentlySelectedPoint = i;
+            d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
+            updateValues(d);
+       });
 
     // add axis labels
-    leftScatterplot
+    scatterplot
         .append("g")
         .attr("transform", "translate(0,"+ (width -30)+ ")")
         .call(xAxis)
@@ -99,7 +88,7 @@ function setup() {
         .style("text-anchor", "end")
         .text("SAT Average");
 
-    leftScatterplot
+    scatterplot
         .append("g")
         .attr("transform", "translate(50, 0)")
         .call(yAxis)
@@ -111,33 +100,20 @@ function setup() {
         .attr("dy", ".71em")
         .style("text-anchor", "end")
         .text("ACT Median");
+}
 
-    rightScatterplot
-        .append("g")
-        .attr("transform", "translate(0,"+ (width -30)+ ")")
-        .call(xAxis)
-        .append("text")
-        .attr('fill', 'black')
-        .attr("class", "label")
-        .attr("x", width-16)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("SAT Average");
+function updateValues(d) {
+        document.getElementById("college").innerHTML = "";
+        document.getElementById("college").append("" + d.name);
 
-    rightScatterplot
-        .append("g")
-        .attr("transform", "translate(50, 0)")
-        .call(yAxis)
-        .append("text")
-        .attr('fill', 'black')
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("ACT Median");
+        document.getElementById("type").innerHTML = "";
+        document.getElementById("type").append("" + d.control);
 
+        document.getElementById("sat").innerHTML = "";
+        document.getElementById("sat").append("" + d.satAvg);
 
+        document.getElementById("act").innerHTML = "";
+        document.getElementById("act").append("" + d.actMed);
 }
 
 

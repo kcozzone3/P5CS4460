@@ -9,9 +9,15 @@ body {
     stroke: lightgreen;
     fill: lightgreen;
 }
-#scatterplot1 {
+.selected {
+    stroke: red;
+    fill: red;
+}
+#scatterplot {
     float: left;
 }
-#scatterplot2 {
-    float: left;
+#labels {
+    float:left;
+    margin-top: 30px;
+    margin-left: 20px;
 }
