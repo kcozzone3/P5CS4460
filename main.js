@@ -184,12 +184,9 @@ function clearGraph() {
     document.getElementById("scatterplot").innerHTML = "";
 
     //clear labels
-    document.getElementById("college").innerHTML = "";
-    document.getElementById("type").innerHTML = "";
+    d3.selectAll('span').innerHTML = "";
     document.getElementById("label1").innerHTML = "";
-    document.getElementById("val1").innerHTML = "";
     document.getElementById("label2").innerHTML = "";
-    document.getElementById("val2").innerHTML = "";
 }
 
 
