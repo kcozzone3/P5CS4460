@@ -35,11 +35,16 @@ function loadData() {
             })
         })
 
-        setupGraph('actMed', 'satAvg');
+        setupGraph('satAvg', 'actMed');
     })
 }
 
 function setupGraph(x, y) {
+    //update labels for on click
+    document.getElementById("label1").innerHTML = label[x] + ':';
+    document.getElementById("label2").innerHTML = label[y] + ':';
+
+
     // get the data we care about
     var xExtent = d3.extent(collegeData, function(row) { return row[x]; });
     var yExtent = d3.extent(collegeData, function(row) { return row[y]; });
@@ -85,7 +90,7 @@ function setupGraph(x, y) {
             }
             currentlySelectedPoint = i;
             d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
-            updateValues(d);
+            updateValues(d, x, y);
        });
 
     // add axis labels
@@ -115,18 +120,18 @@ function setupGraph(x, y) {
         .text(label[y]);
 }
 
-function updateValues(d) {
+function updateValues(d, x, y) {
         document.getElementById("college").innerHTML = "";
         document.getElementById("college").append("" + d.name);
 
         document.getElementById("type").innerHTML = "";
         document.getElementById("type").append("" + d.control);
 
-        document.getElementById("sat").innerHTML = "";
-        document.getElementById("sat").append("" + d.satAvg);
+        document.getElementById("val1").innerHTML = "";
+        document.getElementById("val1").append("" + d[x]);
 
-        document.getElementById("act").innerHTML = "";
-        document.getElementById("act").append("" + d.actMed);
+        document.getElementById("val2").innerHTML = "";
+        document.getElementById("val2").append("" + d[y]);
 }
 
 
