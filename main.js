@@ -45,10 +45,9 @@ function loadData() {
 }
 
 function graph(num) {
-    //TODO: keep currently selected point highlighted btwn graphs -- modularize into selectPoint()?
     switch (num) {
         case 0: setupGraph('satAvg', 'actMed');         break;
-        case 1: setupGraph('costAvg', 'expPerStudent'); break;  //TODO: graph with fixes scales, e.g. both x and y = [0, 150k]
+        case 1: setupGraph('costAvg', 'expPerStudent'); break;  //TODO: graph with same x and y scales, e.g. both [0, 150k]
         case 2: setupGraph('earningsMed', 'debtMed');   break;
         //TODO: add more graph options
         default: break;
@@ -105,9 +104,15 @@ function setupGraph(x, y) {
                 }
             }
             currentlySelectedPoint = i;
-            d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
-            updateValues(d, x, y);
-       });
+            highlightPoint(d, x, y);
+        });
+
+
+    //retain selection between graphs
+    if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
+        highlightPoint(collegeData[currentlySelectedPoint], x, y);
+    }
+
 
     // add axis labels
     scatterplot
@@ -136,18 +141,16 @@ function setupGraph(x, y) {
         .text(label[y]);
 }
 
+function highlightPoint(d, x, y) {
+    d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
+    updateValues(d, x, y);
+}
+
 function updateValues(d, x, y) {
-        document.getElementById("college").innerHTML = "";
-        document.getElementById("college").append("" + d.name);
-
-        document.getElementById("type").innerHTML = "";
-        document.getElementById("type").append("" + d.control);
-
-        document.getElementById("val1").innerHTML = "";
-        document.getElementById("val1").append("" + d[x]);
-
-        document.getElementById("val2").innerHTML = "";
-        document.getElementById("val2").append("" + d[y]);
+        document.getElementById("college").innerHTML = d.name;
+        document.getElementById("type").innerHTML = d.control;
+        document.getElementById("val1").innerHTML = d[x];
+        document.getElementById("val2").innerHTML = d[y];
 }
 
 function nextGraph(curr) {
@@ -185,8 +188,6 @@ function clearGraph() {
     document.getElementById("scatterplot").innerHTML = "";
 
     //clear labels
-    //document.getElementById("college").innerHTML = "";    //TODO: keep currently selected point highlighted btwn graphs
-    //document.getElementById("type").innerHTML = "";
     document.getElementById("label1").innerHTML = "";
     document.getElementById("val1").innerHTML = "";
     document.getElementById("label2").innerHTML = "";
