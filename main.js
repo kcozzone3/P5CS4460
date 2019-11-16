@@ -185,8 +185,8 @@ function clearGraph() {
     document.getElementById("scatterplot").innerHTML = "";
 
     //clear labels
-    document.getElementById("college").innerHTML = "";
-    document.getElementById("type").innerHTML = "";
+    //document.getElementById("college").innerHTML = "";    //TODO: keep currently selected point highlighted btwn graphs
+    //document.getElementById("type").innerHTML = "";
     document.getElementById("label1").innerHTML = "";
     document.getElementById("val1").innerHTML = "";
     document.getElementById("label2").innerHTML = "";
