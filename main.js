@@ -31,8 +31,10 @@ const label = {
 
 function loadData() {
     d3.csv("colleges.csv", function(csv) {
-        //loads into collegeData[]
+        var collegeChoices = d3.select('#college-choices');
+
         csv.forEach(function(d) {
+            //load into collegeData[]
             collegeData.push({
                 name:               String(d[label['name']]),
                 control:            String(d[label['control']]),
@@ -50,6 +52,9 @@ function loadData() {
                 familyIncomeAvg:    Number(d[label['familyIncomeAvg']]),
                 familyIncomeMed:    Number(d[label['familyIncomeMed']])
             })
+
+            //load names for textfield suggestions
+            collegeChoices.append('option').attr('value', d['Name']);
         })
 
         graph(0);
@@ -129,20 +134,25 @@ function setupGraph(x, y, inclLine) {
        .on("click", function(d,i) {
             if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
                 if (collegeData[currentlySelectedPoint]["control"] == "Public") {
-                    d3.select("#p" + currentlySelectedPoint).attr("class", "public");
+                    d3.select("#p" + currentlySelectedPoint).classed("public", true);
                 } else {
-                    d3.select("#p" + currentlySelectedPoint).attr("class", "private");
+                    d3.select("#p" + currentlySelectedPoint).classed("private", true);
                 }
             }
             currentlySelectedPoint = i;
-            highlightPoint(d, x, y);
+            selectPoint(d, x, y);
         });
 
 
     //retain selection between graphs
     if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
-        highlightPoint(collegeData[currentlySelectedPoint], x, y);
+        selectPoint(collegeData[currentlySelectedPoint], x, y);
     }
+
+    var collegeSearch = document.getElementById('college-search');
+    collegeSearch.addEventListener('search', function() {
+        searchCollege(collegeSearch.value, x, y)
+    });
 
 
     // add axis labels
@@ -172,8 +182,10 @@ function setupGraph(x, y, inclLine) {
         .text(label[y]);
 }
 
-function highlightPoint(d, x, y) {
-    d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
+function selectPoint(d, x, y) {
+    d3.selectAll('circle').classed('selected', false);
+    
+    d3.select("#p" + currentlySelectedPoint).classed("selected", true);
     updateValues(d, x, y);
 }
 
@@ -223,6 +235,27 @@ function clearGraph() {
     document.getElementById("val1").innerHTML = "";
     document.getElementById("label2").innerHTML = "";
     document.getElementById("val2").innerHTML = "";
+}
+
+function clearSelection() {
+    d3.selectAll('circle').classed('selected', false);
+
+    document.getElementById("college").innerHTML = "";
+    document.getElementById("type").innerHTML = "";
+    document.getElementById("val1").innerHTML = "";
+    document.getElementById("val2").innerHTML = "";
+}
+
+//onsearch
+function searchCollege(input, x, y) {
+    currentlySelectedPoint = collegeData.findIndex(college => 
+        college.name == input);
+        
+    if (currentlySelectedPoint > -1) {
+        selectPoint(collegeData[currentlySelectedPoint], x, y);
+    } else {
+        clearSelection();
+    }
 }
 
 
