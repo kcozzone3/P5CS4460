@@ -4,7 +4,7 @@ const width = 600;
 const height= 600;
 
 var currGraph = 0;
-const lastGraph = 5;
+const lastGraph = 4;
 
 //set currently selected point (linking) to be a number > items in dataset
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
