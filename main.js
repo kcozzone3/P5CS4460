@@ -51,7 +51,7 @@ function graph(num) {
         case 0: setupGraph('costAvg', 'expPerStudent', true);       break;
         case 1: setupGraph('debtMed', 'earningsMed', true);         break;
         case 2: setupGraph('costAvg', 'facultySalaryAvg', true);    break;
-        case 3: setupGraph('satAvg', 'admissionRate', false)        break;
+        case 3: setupGraph('satAvg', 'admissionRate', false);       break;
         //TODO: add more graph options
         default: break;
     }
