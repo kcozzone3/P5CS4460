@@ -4,40 +4,55 @@ const width = 600;
 const height= 600;
 
 var currGraph = 0;
-const lastGraph = 2;
+const lastGraph = 4;
 
 //set currently selected point (linking) to be a number > items in dataset
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
 
 const label = {
-    'name'          : 'Name',
-    'control'       : 'Control',
-    'admissionRate' : 'Admission Rate',
-    'actMed'        : 'ACT Median',
-    'satAvg'        : 'SAT Average',
-    'costAvg'       : 'Average Cost',
-    'expPerStudent' : 'Expenditure Per Student',
-    'debtMed'       : 'Median Debt on Graduation',
-    'earningsAvg'   : 'Mean Earnings 8 years After Entry',
-    'earningsMed'   : 'Median Earnings 8 years After Entry'
+    'name'              : 'Name',
+    'control'           : 'Control',
+    'admissionRate'     : 'Admission Rate',
+    'actMed'            : 'ACT Median',
+    'satAvg'            : 'SAT Average',
+    'costAvg'           : 'Average Cost',
+    'expPerStudent'     : 'Expenditure Per Student',
+    'debtMed'           : 'Median Debt',
+    'debtOnGradMed'     : 'Median Debt on Graduation',
+    'earningsAvg'       : 'Mean Earnings 8 years After Entry',
+    'earningsMed'       : 'Median Earnings 8 years After Entry',
+    'facultySalaryAvg'  : "Average Faculty Salary",
+    'unemployedNum'     : "Number of Unemployed 8 years after entry",
+    'employedNum'       : "Number of Employed 8 years after entry",
+    'familyIncomeAvg'   : "Average Family Income",
+    'familyIncomeMed'   : "Median Family Income"
 };
 
 function loadData() {
     d3.csv("colleges.csv", function(csv) {
-        //loads into collegeData[]
+        var collegeChoices = d3.select('#college-choices');
+
         csv.forEach(function(d) {
+            //load into collegeData[]
             collegeData.push({
-                name:           String(d['Name']),
-                control:        String(d['Control']),
-                admissionRate:  Number(d['Admission Rate']),
-                actMed:         Number(d['ACT Median']),
-                satAvg:         Number(d['SAT Average']),
-                costAvg:        Number(d['Average Cost']),
-                expPerStudent:  Number(d['Expenditure Per Student']),
-                debtMed:        Number(d['Median Debt on Graduation']),
-                earningsAvg:    Number(d['Mean Earnings 8 years After Entry']),
-                earningsMed:    Number(d['Median Earnings 8 years After Entry'])
+                name:               String(d[label['name']]),
+                control:            String(d[label['control']]),
+                admissionRate:      Number(d[label['admissionRate']]),
+                actMed:             Number(d[label['actMed']]),
+                satAvg:             Number(d[label['satAvg']]),
+                costAvg:            Number(d[label['costAvg']]),
+                expPerStudent:      Number(d[label['expPerStudent']]),
+                debtMed:            Number(d[label['debtMed']]),
+                debtOnGradMed:      Number(d[label['debtOnGradMed']]),
+                earningsAvg:        Number(d[label['earningsAvg']]),
+                earningsMed:        Number(d[label['earningsMed']]),
+                facultySalaryAvg:   Number(4.5 * d[label['facultySalaryAvg']]),  //monthly * 4.5 -> per semester
+                familyIncomeAvg:    Number(d[label['familyIncomeAvg']]),
+                familyIncomeMed:    Number(d[label['familyIncomeMed']])
             })
+
+            //load names for textfield suggestions
+            collegeChoices.append('option').attr('value', d['Name']);
         })
 
         graph(0);
@@ -46,15 +61,18 @@ function loadData() {
 
 function graph(num) {
     switch (num) {
-        case 0: setupGraph('satAvg', 'actMed');         break;
-        case 1: setupGraph('costAvg', 'expPerStudent'); break;  //TODO: graph with same x and y scales, e.g. both [0, 150k]
-        case 2: setupGraph('earningsMed', 'debtMed');   break;
+        case 0: setupGraph('costAvg', 'expPerStudent', true);           break;
+        case 1: setupGraph('debtOnGradMed', 'earningsMed', true);       break;
+        case 2: setupGraph('costAvg', 'facultySalaryAvg', true);        break;
+        case 3: setupGraph('satAvg', 'admissionRate', false);           break;
+        case 4: setupGraph('familyIncomeAvg', 'admissionRate', false);  break;
+        
         //TODO: add more graph options
         default: break;
     }
 }
 
-function setupGraph(x, y) {
+function setupGraph(x, y, inclLine) {
     //update labels based on graph params
     document.getElementById("label1").innerHTML = label[x] + ':';
     document.getElementById("label2").innerHTML = label[y] + ':';
@@ -79,6 +97,21 @@ function setupGraph(x, y) {
                     .attr("height",height);
 
 
+    //draw y=x line
+    if (inclLine) {
+        var extent = Math.min(xExtent[1], yExtent[1]);
+
+        scatterplot.append('line')
+            .attr('id', 'line')
+            .attr('x1', 50)
+            .attr('x2', xScale(extent))
+            .attr('y1', 570) 
+            .attr('y2', yScale(extent))
+            .style('stroke', 'lightgray');
+    }
+
+
+
     // add points
     var points = scatterplot.selectAll("circle")
        .data(collegeData)
@@ -98,20 +131,25 @@ function setupGraph(x, y) {
        .on("click", function(d,i) {
             if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
                 if (collegeData[currentlySelectedPoint]["control"] == "Public") {
-                    d3.select("#p" + currentlySelectedPoint).attr("class", "public");
+                    d3.select("#p" + currentlySelectedPoint).classed("public", true);
                 } else {
-                    d3.select("#p" + currentlySelectedPoint).attr("class", "private");
+                    d3.select("#p" + currentlySelectedPoint).classed("private", true);
                 }
             }
             currentlySelectedPoint = i;
-            highlightPoint(d, x, y);
+            selectPoint(d, x, y);
         });
 
 
     //retain selection between graphs
     if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
-        highlightPoint(collegeData[currentlySelectedPoint], x, y);
+        selectPoint(collegeData[currentlySelectedPoint], x, y);
     }
+
+    var collegeSearch = document.getElementById('college-search');
+    collegeSearch.addEventListener('search', function() {
+        searchCollege(collegeSearch.value, x, y)
+    });
 
 
     // add axis labels
@@ -141,8 +179,17 @@ function setupGraph(x, y) {
         .text(label[y]);
 }
 
-function highlightPoint(d, x, y) {
-    d3.select("#p" + currentlySelectedPoint).attr("class", "selected");
+function selectPoint(d, x, y) {
+    d3.selectAll('circle').classed('selected', false);
+    
+    d3.select("#p" + currentlySelectedPoint).classed('selected', true);
+
+    //redraw point for visibility
+    var selectedPointClone = document.getElementById("p" + currentlySelectedPoint).cloneNode(); 
+    document.getElementById("p" + currentlySelectedPoint).remove();
+    document.getElementById('scatterplot').getElementsByTagName('svg')[0].appendChild(selectedPointClone);
+    
+    d3.select('#header').text("Is " + collegeData[currentlySelectedPoint].name + " worth it?");
     updateValues(d, x, y);
 }
 
@@ -192,6 +239,27 @@ function clearGraph() {
     document.getElementById("val1").innerHTML = "";
     document.getElementById("label2").innerHTML = "";
     document.getElementById("val2").innerHTML = "";
+}
+
+function clearSelection() {
+    d3.selectAll('circle').classed('selected', false);
+
+    document.getElementById("college").innerHTML = "";
+    document.getElementById("type").innerHTML = "";
+    document.getElementById("val1").innerHTML = "";
+    document.getElementById("val2").innerHTML = "";
+}
+
+//onsearch
+function searchCollege(input, x, y) {
+    currentlySelectedPoint = collegeData.findIndex(college => 
+        college.name == input);
+        
+    if (currentlySelectedPoint > -1) {
+        selectPoint(collegeData[currentlySelectedPoint], x, y);
+    } else {
+        clearSelection();
+    }
 }
 
 

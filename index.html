@@ -4,12 +4,23 @@
 		<meta charset="UTF-8"/>
 		<link href="style.css" type="text/css" rel="stylesheet" />
 		<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="main.js"></script>
+        
+        <title>Is college worth it?</title>
    	</head>
    	<body>
-   		<p>
-   			Blue is public, green is private
-   		</p>
+        <h1 id="header">Is college worth it?</h1>
+
+        <!-- Search Bar -->
+        <div>
+            <label>School: </label>
+            <input id="college-search" type="search" list="college-choices" size="45"/>
+            <datalist id="college-choices"></datalist>
+        </div>   
+
+        <p></p>
+
+        <!-- Scatterplot -->
 	   	<div id="wrapper">
 			<div id="scatterplot">
 	        </div>
@@ -19,12 +30,17 @@
                     <button id="next" onclick="nextGraph()">→</button>
                 </div>
 
-                <p></p> <!-- space between buttons and labels -->
+                <p></p> 
 
+                <span style="color:lightblue">public </span> <span style="color:lightgreen">private</span>
+
+                <p></p>
+
+                <!-- Labels -->
 		        <strong>College Name:</strong> <span id="college"></span><br/>
 		        <strong>College Type:</strong> <span id="type"></span><br/>
 		        <strong id="label1"></strong> <span id="val1"></span><br/>
-		        <strong id="label2"></strong> <span id="val2"></span><br/>
+                <strong id="label2"></strong> <span id="val2"></span><br/>
 	        </div>
         </div>
 	</body>
