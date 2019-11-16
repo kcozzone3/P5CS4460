@@ -189,6 +189,7 @@ function selectPoint(d, x, y) {
     document.getElementById("p" + currentlySelectedPoint).remove();
     document.getElementById('scatterplot').getElementsByTagName('svg')[0].appendChild(selectedPointClone);
     
+    d3.select('#header').text("Is " + collegeData[currentlySelectedPoint].name + " worth it?");
     updateValues(d, x, y);
 }
 
