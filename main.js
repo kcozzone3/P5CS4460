@@ -4,7 +4,7 @@ const width = 600;
 const height= 600;
 
 var currGraph = 0;
-const lastGraph = 1;
+const lastGraph = 2;
 
 //set currently selected point (linking) to be a number > items in dataset
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
@@ -45,10 +45,11 @@ function loadData() {
 }
 
 function graph(num) {
-    //TODO: keep currently selected point highlighted btwn graphs
+    //TODO: keep currently selected point highlighted btwn graphs -- modularize into selectPoint()?
     switch (num) {
         case 0: setupGraph('satAvg', 'actMed');         break;
-        case 1: setupGraph('costAvg', 'expPerStudent'); break;
+        case 1: setupGraph('costAvg', 'expPerStudent'); break;  //TODO: graph with fixes scales, e.g. both x and y = [0, 150k]
+        case 2: setupGraph('earningsMed', 'debtMed');   break;
         //TODO: add more graph options
         default: break;
     }
@@ -96,7 +97,7 @@ function setupGraph(x, y) {
        .attr("cy", function(d) { return yScale(d[y]); })
        .attr("r", 5)
        .on("click", function(d,i) {
-            if (currentlySelectedPoint < 100000) {
+            if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
                 if (collegeData[currentlySelectedPoint]["control"] == "Public") {
                     d3.select("#p" + currentlySelectedPoint).attr("class", "public");
                 } else {
