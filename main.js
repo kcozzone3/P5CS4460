@@ -4,7 +4,7 @@ const width = 600;
 const height= 600;
 
 var currGraph = 0;
-const lastGraph = 2;
+const lastGraph = 3;
 
 //set currently selected point (linking) to be a number > items in dataset
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
@@ -48,9 +48,10 @@ function loadData() {
 
 function graph(num) {
     switch (num) {
-        case 0: setupGraph('satAvg', 'actMed');         break;
-        case 1: setupGraph('costAvg', 'expPerStudent'); break;  //TODO: graph with same x and y scales, e.g. both [0, 150k]
-        case 2: setupGraph('earningsMed', 'debtMed');   break;
+        case 0: setupGraph('costAvg', 'expPerStudent', true);       break;
+        case 1: setupGraph('debtMed', 'earningsMed', true);         break;
+        case 2: setupGraph('costAvg', 'facultySalaryAvg', true);    break;
+        case 3: setupGraph('satAvg', 'admissionRate', false)        break;
         //TODO: add more graph options
         default: break;
     }
