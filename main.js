@@ -10,16 +10,17 @@ const lastGraph = 2;
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
 
 const label = {
-    'name'          : 'Name',
-    'control'       : 'Control',
-    'admissionRate' : 'Admission Rate',
-    'actMed'        : 'ACT Median',
-    'satAvg'        : 'SAT Average',
-    'costAvg'       : 'Average Cost',
-    'expPerStudent' : 'Expenditure Per Student',
-    'debtMed'       : 'Median Debt on Graduation',
-    'earningsAvg'   : 'Mean Earnings 8 years After Entry',
-    'earningsMed'   : 'Median Earnings 8 years After Entry'
+    'name'              : 'Name',
+    'control'           : 'Control',
+    'admissionRate'     : 'Admission Rate',
+    'actMed'            : 'ACT Median',
+    'satAvg'            : 'SAT Average',
+    'costAvg'           : 'Average Cost',
+    'expPerStudent'     : 'Expenditure Per Student',
+    'debtMed'           : 'Median Debt on Graduation',
+    'earningsAvg'       : 'Mean Earnings 8 years After Entry',
+    'earningsMed'       : 'Median Earnings 8 years After Entry',
+    'facultySalaryAvg'  : "Average Faculty Salary"
 };
 
 function loadData() {
@@ -27,16 +28,17 @@ function loadData() {
         //loads into collegeData[]
         csv.forEach(function(d) {
             collegeData.push({
-                name:           String(d['Name']),
-                control:        String(d['Control']),
-                admissionRate:  Number(d['Admission Rate']),
-                actMed:         Number(d['ACT Median']),
-                satAvg:         Number(d['SAT Average']),
-                costAvg:        Number(d['Average Cost']),
-                expPerStudent:  Number(d['Expenditure Per Student']),
-                debtMed:        Number(d['Median Debt on Graduation']),
-                earningsAvg:    Number(d['Mean Earnings 8 years After Entry']),
-                earningsMed:    Number(d['Median Earnings 8 years After Entry'])
+                name:               String(d[label['name']]),
+                control:            String(d[label['control']]),
+                admissionRate:      Number(d[label['admissionRate']]),
+                actMed:             Number(d[label['actMed']]),
+                satAvg:             Number(d[label['satAvg']]),
+                costAvg:            Number(d[label['costAvg']]),
+                expPerStudent:      Number(d[label['expPerStudent']]),
+                debtMed:            Number(d[label['debtMed']]),
+                earningsAvg:        Number(d[label['earningsAvg']]),
+                earningsMed:        Number(d[label['earningsMed']]),
+                facultySalaryAvg:   Number(4.5 * d[label['facultySalaryAvg']])  //monthly * 4.5 -> per semester
             })
         })
 
