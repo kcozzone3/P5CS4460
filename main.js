@@ -103,9 +103,8 @@ function setupGraph(x, y) {
        .on("click", function(d,i) {
             if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
                 if (collegeData[currentlySelectedPoint]["control"] == "Public") {
-                    d3.select("#p" + currentlySelectedPoint).attr("class", "public");
+                    d3.select("#p" + currentlySelectedPoint).classed("public", true);
                 } else {
-                    d3.select("#p" + currentlySelectedPoint).attr("class", "private");
                     d3.select("#p" + currentlySelectedPoint).classed("private", true);
                 }
             }
