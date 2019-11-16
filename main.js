@@ -4,7 +4,7 @@ const width = 600;
 const height= 600;
 
 var currGraph = 0;
-const lastGraph = 3;
+const lastGraph = 5;
 
 //set currently selected point (linking) to be a number > items in dataset
 var currentlySelectedPoint = Number.MAX_SAFE_INTEGER;
@@ -17,10 +17,16 @@ const label = {
     'satAvg'            : 'SAT Average',
     'costAvg'           : 'Average Cost',
     'expPerStudent'     : 'Expenditure Per Student',
-    'debtMed'           : 'Median Debt on Graduation',
+    'debtMed'           : 'Median Debt',
+    'debtOnGradMed'     : 'Median Debt on Graduation',
     'earningsAvg'       : 'Mean Earnings 8 years After Entry',
     'earningsMed'       : 'Median Earnings 8 years After Entry',
-    'facultySalaryAvg'  : "Average Faculty Salary"
+    'facultySalaryAvg'  : "Average Faculty Salary",
+    'unemployedNum'     : "Number of Unemployed 8 years after entry",
+    'employedNum'       : "Number of Employed 8 years after entry",
+    'employmentRate'    : "Percent Employed 8 years after entry",
+    'familyIncomeAvg'   : "Average Family Income",
+    'familyIncomeMed'   : "Median Family Income"
 };
 
 function loadData() {
@@ -36,9 +42,13 @@ function loadData() {
                 costAvg:            Number(d[label['costAvg']]),
                 expPerStudent:      Number(d[label['expPerStudent']]),
                 debtMed:            Number(d[label['debtMed']]),
+                debtOnGradMed:      Number(d[label['debtOnGradMed']]),
                 earningsAvg:        Number(d[label['earningsAvg']]),
                 earningsMed:        Number(d[label['earningsMed']]),
-                facultySalaryAvg:   Number(4.5 * d[label['facultySalaryAvg']])  //monthly * 4.5 -> per semester
+                facultySalaryAvg:   Number(4.5 * d[label['facultySalaryAvg']]),  //monthly * 4.5 -> per semester
+                employmentRate:     Number(d[label['employedNum']]) / (Number(d[label['employedNum']]) + Number(d[label['unemployedNum']])),
+                familyIncomeAvg:    Number(d[label['familyIncomeAvg']]),
+                familyIncomeMed:    Number(d[label['familyIncomeMed']])
             })
         })
 
@@ -48,10 +58,13 @@ function loadData() {
 
 function graph(num) {
     switch (num) {
-        case 0: setupGraph('costAvg', 'expPerStudent', true);       break;
-        case 1: setupGraph('debtMed', 'earningsMed', true);         break;
-        case 2: setupGraph('costAvg', 'facultySalaryAvg', true);    break;
-        case 3: setupGraph('satAvg', 'admissionRate', false);       break;
+        case 0: setupGraph('costAvg', 'expPerStudent', true);           break;
+        case 1: setupGraph('debtOnGradMed', 'earningsMed', true);       break;
+        case 2: setupGraph('costAvg', 'facultySalaryAvg', true);        break;
+        case 3: setupGraph('satAvg', 'admissionRate', false);           break;
+        case 4: setupGraph('familyIncomeAvg', 'admissionRate', false);  break;
+        case 5: setupGraph('debtMed', 'employmentRate', false);         break;
+        
         //TODO: add more graph options
         default: break;
     }
@@ -92,7 +105,7 @@ function setupGraph(x, y, inclLine) {
             .attr('x2', xScale(extent))
             .attr('y1', 570) 
             .attr('y2', yScale(extent))
-            .style('stroke', 'gray');
+            .style('stroke', 'lightgray');
     }
 
 
