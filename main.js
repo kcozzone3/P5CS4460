@@ -24,7 +24,6 @@ const label = {
     'facultySalaryAvg'  : "Average Faculty Salary",
     'unemployedNum'     : "Number of Unemployed 8 years after entry",
     'employedNum'       : "Number of Employed 8 years after entry",
-    'employmentRate'    : "Percent Employed 8 years after entry",
     'familyIncomeAvg'   : "Average Family Income",
     'familyIncomeMed'   : "Median Family Income"
 };
@@ -48,7 +47,6 @@ function loadData() {
                 earningsAvg:        Number(d[label['earningsAvg']]),
                 earningsMed:        Number(d[label['earningsMed']]),
                 facultySalaryAvg:   Number(4.5 * d[label['facultySalaryAvg']]),  //monthly * 4.5 -> per semester
-                employmentRate:     Number(d[label['employedNum']]) / (Number(d[label['employedNum']]) + Number(d[label['unemployedNum']])),
                 familyIncomeAvg:    Number(d[label['familyIncomeAvg']]),
                 familyIncomeMed:    Number(d[label['familyIncomeMed']])
             })
@@ -68,7 +66,6 @@ function graph(num) {
         case 2: setupGraph('costAvg', 'facultySalaryAvg', true);        break;
         case 3: setupGraph('satAvg', 'admissionRate', false);           break;
         case 4: setupGraph('familyIncomeAvg', 'admissionRate', false);  break;
-        case 5: setupGraph('debtMed', 'employmentRate', false);         break;
         
         //TODO: add more graph options
         default: break;
@@ -185,7 +182,13 @@ function setupGraph(x, y, inclLine) {
 function selectPoint(d, x, y) {
     d3.selectAll('circle').classed('selected', false);
     
-    d3.select("#p" + currentlySelectedPoint).classed("selected", true);
+    d3.select("#p" + currentlySelectedPoint).classed('selected', true);
+
+    //redraw point for visibility
+    var selectedPointClone = document.getElementById("p" + currentlySelectedPoint).cloneNode(); 
+    document.getElementById("p" + currentlySelectedPoint).remove();
+    document.getElementById('scatterplot').getElementsByTagName('svg')[0].appendChild(selectedPointClone);
+    
     updateValues(d, x, y);
 }
 
