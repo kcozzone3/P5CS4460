@@ -102,12 +102,18 @@ function setupGraph(x, y, inclLine) {
         var extent = Math.min(xExtent[1], yExtent[1]);
 
         scatterplot.append('line')
-            .attr('id', 'line')
             .attr('x1', 50)
             .attr('x2', xScale(extent))
             .attr('y1', 570) 
             .attr('y2', yScale(extent))
             .style('stroke', 'lightgray');
+
+        //line label
+        scatterplot.append('text')
+            .attr('x', xScale(extent)/2)
+            .attr('y', (570 + yScale(extent))/2)    //y1-y2 midpoint
+            .text('1:1')
+            .style('fill', 'lightgray');
     }
 
 
