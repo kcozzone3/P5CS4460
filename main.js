@@ -54,7 +54,7 @@ function graph(num) {
     }
 }
 
-function setupGraph(x, y) {
+function setupGraph(x, y, inclLine) {
     //update labels based on graph params
     document.getElementById("label1").innerHTML = label[x] + ':';
     document.getElementById("label2").innerHTML = label[y] + ':';
@@ -77,6 +77,21 @@ function setupGraph(x, y) {
                     .append("svg:svg")
                     .attr("width",width)
                     .attr("height",height);
+
+
+    //draw y=x line
+    if (inclLine) {
+        var extent = Math.min(xExtent[1], yExtent[1]);
+
+        scatterplot.append('line')
+            .attr('id', 'line')
+            .attr('x1', 50)
+            .attr('x2', xScale(extent))
+            .attr('y1', 570) 
+            .attr('y2', yScale(extent))
+            .style('stroke', 'gray');
+    }
+
 
 
     // add points
