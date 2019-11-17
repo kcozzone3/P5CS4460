@@ -66,7 +66,7 @@ function graph(num) {
         case 2: setupGraph('costAvg', 'facultySalaryAvg', true);        break;
         case 3: setupGraph('satAvg', 'admissionRate', false);           break;
         case 4: setupGraph('familyIncomeAvg', 'admissionRate', false);  break;
-        
+
         //TODO: add more graph options
         default: break;
     }
@@ -104,7 +104,7 @@ function setupGraph(x, y, inclLine) {
         scatterplot.append('line')
             .attr('x1', 50)
             .attr('x2', xScale(extent))
-            .attr('y1', 570) 
+            .attr('y1', 570)
             .attr('y2', yScale(extent))
             .style('stroke', 'lightgray');
 
@@ -134,18 +134,30 @@ function setupGraph(x, y, inclLine) {
        .attr("cx", function(d) { return xScale(d[x]); })
        .attr("cy", function(d) { return yScale(d[y]); })
        .attr("r", 5)
-       .on("click", function(d,i) {
-            if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
-                if (collegeData[currentlySelectedPoint]["control"] == "Public") {
-                    d3.select("#p" + currentlySelectedPoint).classed("public", true);
-                } else {
-                    d3.select("#p" + currentlySelectedPoint).classed("private", true);
-                }
+       .style("opacity", function(d) {
+            if (d == collegeData[currentlySelectedPoint]) {
+                return 1;
+            } else {
+                return 0;
             }
-            currentlySelectedPoint = i;
-            selectPoint(d, x, y);
-        });
+       })
 
+    points.transition()
+        .duration(400)
+        .delay(function(d, j) { return j * 0.7;})
+        .style("opacity", 1);
+
+    points.on("click", function(d,i) {
+        if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
+            if (collegeData[currentlySelectedPoint]["control"] == "Public") {
+                d3.select("#p" + currentlySelectedPoint).classed("public", true);
+            } else {
+                d3.select("#p" + currentlySelectedPoint).classed("private", true);
+            }
+        }
+        currentlySelectedPoint = i;
+        selectPoint(d, x, y);
+    });
 
     //retain selection between graphs
     if (currentlySelectedPoint < Number.MAX_SAFE_INTEGER) {
@@ -187,14 +199,14 @@ function setupGraph(x, y, inclLine) {
 
 function selectPoint(d, x, y) {
     d3.selectAll('circle').classed('selected', false);
-    
+
     d3.select("#p" + currentlySelectedPoint).classed('selected', true);
 
     //redraw point for visibility
-    var selectedPointClone = document.getElementById("p" + currentlySelectedPoint).cloneNode(); 
+    var selectedPointClone = document.getElementById("p" + currentlySelectedPoint).cloneNode();
     document.getElementById("p" + currentlySelectedPoint).remove();
     document.getElementById('scatterplot').getElementsByTagName('svg')[0].appendChild(selectedPointClone);
-    
+
     d3.select('#header').text("Is " + collegeData[currentlySelectedPoint].name + " worth it?");
     updateValues(d, x, y);
 }
@@ -258,9 +270,9 @@ function clearSelection() {
 
 //onsearch
 function searchCollege(input, x, y) {
-    currentlySelectedPoint = collegeData.findIndex(college => 
+    currentlySelectedPoint = collegeData.findIndex(college =>
         college.name == input);
-        
+
     if (currentlySelectedPoint > -1) {
         selectPoint(collegeData[currentlySelectedPoint], x, y);
     } else {
